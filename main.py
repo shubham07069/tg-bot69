@@ -1,42 +1,29 @@
 import telebot
-import requests
 import os
+import random
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-
+TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
-CUSTOM_INSTRUCTION = "Act like a witty assistant who roasts idiots but still gives accurate info."
+# 🔞 Random gaali list (aur add kar sakta hai tu apni pasand ki 😎)
+gaali_list = [
+    "Kya bolta be bhosdike? 😤",
+    "Chal bhaag yaha se laude! 💩",
+    "Sun bhen ke l***, kya chahiye tujhe? 😂",
+    "Aa gaya firse chutiyapa leke? 😒",
+    "Kyu bula raha hai bhenchod? 🤬",
+    "Apun busy hai madarchod! 😎",
+    "Gand maarunga teri virtual hi sahi 💀"
+]
 
-@bot.message_handler(func=lambda message: True)
-def handle_message(message):
-    user_input = message.text
+@bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'])
+def handle_group_messages(message):
+    if f"@{bot.get_me().username}" in message.text:
+        random_gaali = random.choice(gaali_list)
+        bot.reply_to(message, random_gaali)
 
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "deepseek/deepseek-chat-v3-0324:free",
-        "messages": [
-            {"role": "system", "content": CUSTOM_INSTRUCTION},
-            {"role": "user", "content": user_input}
-        ]
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        result = response.json()
-
-        if "choices" in result:
-            bot.reply_to(message, result["choices"][0]["message"]["content"])
-        else:
-            bot.reply_to(message, f"maa chudi padi hai, response ye aya:\n{result}")
-
-    except Exception as e:
-        bot.reply_to(message, f"Error aa gaya laude: {str(e)}")
+@bot.message_handler(func=lambda message: message.chat.type == 'private')
+def handle_private(message):
+    bot.reply_to(message, "Private me mat aa laude, public me chillaunga teri maa ki 😆")
 
 bot.polling()
