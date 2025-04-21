@@ -2,14 +2,24 @@ import telebot
 import os
 import requests
 
-BOT_TOKEN = "8183341615:AAHXfokwLwHo6swYahB47HOAqZEGrK4d7D0"  # 🛑 Yaha apna real token daal
+# Bot Token
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Use environment variable for better security
+if not BOT_TOKEN:
+    raise ValueError("Bot token is not set. Please provide it in environment variables.")
+
+# Remove Webhook
 requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/deleteWebhook")
 print("Webhook successfully removed bhadwe! 🚀")
 
+# OpenRouter API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OpenRouter API Key not found. Please set it in environment variables.")
 
-bot = telebot.TeleBot("8183341615:AAHXfokwLwHo6swYahB47HOAqZEGrK4d7D0")
+# Initialize the Bot
+bot = telebot.TeleBot(BOT_TOKEN)
 
+# Define the handler for messages
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     prompt = message.text
@@ -22,7 +32,7 @@ def handle_message(message):
     }
 
     data = {
-        "model": "deepseek/deepseek-chat-v3-0324:free",  # or claude-3-haiku / llama3
+        "model": "deepseek/deepseek-chat-v3-0324:free",  # You can try other models too
         "messages": [
             {"role": "system", "content": custom_inst},
             {"role": "user", "content": prompt}
@@ -35,11 +45,16 @@ def handle_message(message):
         json=data
     )
 
+    # Handle response
     if response.status_code == 200:
-        reply = response.json()['choices'][0]['message']['content']
-        bot.reply_to(message, reply)
+        data = response.json()
+        if 'choices' in data and len(data['choices']) > 0:
+            reply = data['choices'][0]['message']['content']
+            bot.reply_to(message, reply)
+        else:
+            bot.reply_to(message, "Bhai kuch to lauda lag gaya! 😵")
     else:
-        bot.reply_to(message, "Bhai kuch to lauda lag gaya! 😵")
+        bot.reply_to(message, f"Error: {response.status_code} - Something went wrong! 😖")
 
+# Start polling
 bot.infinity_polling(skip_pending=True)
-
