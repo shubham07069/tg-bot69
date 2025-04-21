@@ -1,9 +1,10 @@
 import os
-import telebot
 import requests
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+BOT_TOKEN = "8183341615:AAHXfokwLwHo6swYahB47HOAqZEGrK4d7D0"  # 🛑 Yaha apna real token daal
 requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/deleteWebhook")
+print("Webhook successfully removed bhadwe! 🚀")
+
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
