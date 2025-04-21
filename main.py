@@ -1,8 +1,11 @@
-import telebot
 import os
-import random
+import telebot
 
-TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
+if TELEGRAM_BOT_TOKEN is None:
+    raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set!")
+    
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 # 🔞 Random gaali list (aur add kar sakta hai tu apni pasand ki 😎)
