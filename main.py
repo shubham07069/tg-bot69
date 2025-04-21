@@ -38,4 +38,5 @@ def handle_message(message):
     else:
         bot.reply_to(message, "Bhai kuch to lauda lag gaya! 😵")
 
-bot.infinity_polling()
+bot.infinity_polling(skip_pending=True)
+
