@@ -8,7 +8,7 @@ print("Webhook successfully removed bhadwe! 🚀")
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+bot = telebot.TeleBot(8183341615:AAHXfokwLwHo6swYahB47HOAqZEGrK4d7D0)
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
