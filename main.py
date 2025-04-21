@@ -20,7 +20,7 @@ def handle_message(message):
     }
 
     payload = {
-        "model": "openai/gpt-4o-mini",
+        "model": "google/gemini-2.5-pro-exp-03-25:free",
         "messages": [
             {"role": "system", "content": CUSTOM_INSTRUCTION},
             {"role": "user", "content": user_input}
