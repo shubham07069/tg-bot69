@@ -19,7 +19,7 @@ def handle_message(message):
     }
 
     data = {
-        "model": "mistralai/mistral-7b-instruct",  # or claude-3-haiku / llama3
+        "model": "deepseek/deepseek-chat-v3-0324:free",  # or claude-3-haiku / llama3
         "messages": [
             {"role": "system", "content": custom_inst},
             {"role": "user", "content": prompt}
