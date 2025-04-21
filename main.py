@@ -1,32 +1,41 @@
 import os
 import telebot
+import requests
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-if TELEGRAM_BOT_TOKEN is None:
-    raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set!")
-    
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
-# 🔞 Random gaali list (aur add kar sakta hai tu apni pasand ki 😎)
-gaali_list = [
-    "Kya bolta be bhosdike? 😤",
-    "Chal bhaag yaha se laude! 💩",
-    "Sun bhen ke l***, kya chahiye tujhe? 😂",
-    "Aa gaya firse chutiyapa leke? 😒",
-    "Kyu bula raha hai bhenchod? 🤬",
-    "Apun busy hai madarchod! 😎",
-    "Gand maarunga teri virtual hi sahi 💀"
-]
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    prompt = message.text
+    custom_inst = "You are a funny and helpful AI who abuses like a street dog. Use Hindi + English gaali mix."
 
-@bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'])
-def handle_group_messages(message):
-    if f"@{bot.get_me().username}" in message.text:
-        random_gaali = random.choice(gaali_list)
-        bot.reply_to(message, random_gaali)
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "HTTP-Referer": "https://t.me/YOUR_BOT_USERNAME",  # Replace with your bot username
+        "X-Title": "TelegramGPTBot"
+    }
 
-@bot.message_handler(func=lambda message: message.chat.type == 'private')
-def handle_private(message):
-    bot.reply_to(message, "Private me mat aa laude, public me chillaunga teri maa ki 😆")
+    data = {
+        "model": "mistralai/mistral-7b-instruct",  # or claude-3-haiku / llama3
+        "messages": [
+            {"role": "system", "content": custom_inst},
+            {"role": "user", "content": prompt}
+        ]
+    }
 
-bot.polling()
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json=data
+    )
+
+    if response.status_code == 200:
+        reply = response.json()['choices'][0]['message']['content']
+        bot.reply_to(message, reply)
+    else:
+        bot.reply_to(message, "Bhai kuch to lauda lag gaya! 😵")
+
+bot.infinity_polling()
