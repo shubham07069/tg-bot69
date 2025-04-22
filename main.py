@@ -52,7 +52,7 @@ def handle_message(message):
             reply = data['choices'][0]['message']['content']
             bot.reply_to(message, reply)
         else:
-            bot.reply_to(message, "Bhai kuch to lauda lag gaya! 😵")
+            bot.reply_to(message, "Ruk ja bhai thodi der Abhi mera maa chuda hua hai"! 😵")
     else:
         bot.reply_to(message, f"Error: {response.status_code} - Something went wrong! 😖")
 
